@@ -19,3 +19,6 @@
    - **Chrome/Edge**：安装 [Tampermonkey](https://www.tampermonkey.net/)
    - **Firefox**：安装 [Greasemonkey](https://addons.mozilla.org/zh-CN/firefox/addon/greasemonkey/)
 2. 复制 `DLUT_GPA_Helper.js` 文件，通过新建脚本粘贴到脚本管理器中
+3. 登陆综合教学管理系统使用
+
+请注意：**当复选框没有显示出来的时候请刷新界面**
