@@ -211,6 +211,8 @@
                     const checkbox = document.createElement("input");
                     checkbox.type = "checkbox";
                     checkbox.className = "weighted-checkbox";
+                    checkbox.style.transform = "scale(1.5)";
+                    checkbox.style.margin = "5px"; // 可选，增加点击区域
                     checkbox.addEventListener("change", recalc);
                     newCell.appendChild(checkbox);
                     row.appendChild(newCell); // 在最后插入新单元格

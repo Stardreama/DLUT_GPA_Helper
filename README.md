@@ -10,13 +10,12 @@
 - 📊 **浮动显示结果**：计算结果显示在浮动窗口中，方便查看
 - 📱 **响应式界面**：适配桌面和移动设备的教务系统
 
-## 安装方法
+![](./images/1.png)
+![](./images/2.png)
 
-### 方法一：使用脚本管理器
+## 安装方法
 
 1. 首先安装脚本管理器扩展：
    - **Chrome/Edge**：安装 [Tampermonkey](https://www.tampermonkey.net/)
    - **Firefox**：安装 [Greasemonkey](https://addons.mozilla.org/zh-CN/firefox/addon/greasemonkey/)
-2. 下载 `DLUT_GPA_Helper.js` 文件
-3. 打开脚本管理器的管理面板
-4. 将文件拖入或通过“导入”选项添加脚本
+2. 复制 `DLUT_GPA_Helper.js` 文件，通过新建脚本粘贴到脚本管理器中
