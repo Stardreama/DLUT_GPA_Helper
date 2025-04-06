@@ -94,7 +94,7 @@
                 const scoreText = row.cells[5].innerText.trim();
                 const credit = parseFloat(creditText);
                 const score = parseFloat(scoreText);
-                console.log("学分: " + credit + ", 成绩: " + score);
+                //console.log("学分: " + credit + ", 成绩: " + score);
                 if (!isNaN(credit) && !isNaN(score)) {
                     totalWeightedScore += credit * score;
                     totalCredits += credit;
@@ -136,7 +136,9 @@
         } else {
             selectRequiredButtonClicked = true;
             selectRequiredCourses();
-            alert("已选择所有必修课！请注意，一些专业劳动课,健康教育等也是必修课，请根据自身需求进行保留。");
+            alert(
+                "已选择所有必修课！请注意，一些专业劳动课,健康教育等也是必修课，请根据自身需求进行保留。"
+            );
             selectRequiredButton.innerText = "取消选择所有必修课";
         }
     });
@@ -176,7 +178,7 @@
     }
 
     setTimeout(() => {
-        console.log("2 秒后执行的代码");
+        //console.log("2 秒后执行的代码");
 
         const student_grade_tables = document.querySelectorAll(
             "table.student-grade-table"
@@ -186,7 +188,7 @@
             return;
         }
         student_grade_tables.forEach((element) => {
-            console.log(element);
+            // console.log(element);
 
             const headerRow = element.querySelector("thead tr");
             const tdElements = headerRow.querySelectorAll("td");
@@ -202,7 +204,7 @@
                 newHeaderCell.innerText = "选择";
                 headerRow.appendChild(newHeaderCell);
             }
-            console.log("选择头添加成功");
+            // console.log("选择头添加成功");
             const tbodyRows = element.querySelectorAll("tbody tr");
             if (tbodyRows.length > 0) {
                 tbodyRows.forEach((row) => {
@@ -220,4 +222,81 @@
             }
         });
     }, 1000);
+
+    // 为每个学期标题添加选择按钮
+    setTimeout(() => {
+        // 查找所有学期标题
+        console.log("查找所有学期标题");
+        const semesterTitles = document.querySelectorAll(".semesterName");
+
+        semesterTitles.forEach((title) => {
+            // 创建按钮容器，设置为flex布局
+            const titleContainer = document.createElement("div");
+            titleContainer.style.display = "flex";
+            titleContainer.style.justifyContent = "space-between";
+            titleContainer.style.alignItems = "center";
+
+            // 将标题节点移到新容器中
+            const titleParent = title.parentNode;
+            titleParent.removeChild(title);
+            titleContainer.appendChild(title);
+
+            // 创建选择按钮
+            const selectButton = document.createElement("button");
+            selectButton.innerText = "选择本学期";
+            selectButton.className = "semester-select-btn";
+            selectButton.style.padding = "5px 10px";
+            selectButton.style.cursor = "pointer";
+            selectButton.style.border = "none";
+            selectButton.style.borderRadius = "5px";
+            selectButton.style.backgroundColor = "#2196F3";
+            selectButton.style.color = "#fff";
+            selectButton.style.fontSize = "12px";
+            selectButton.style.marginRight = "10px";
+
+            // 标记按钮状态
+            selectButton.dataset.selected = "false";
+            console.log("标题设置成功");
+
+            // 添加点击事件
+            selectButton.addEventListener("click", function () {
+                // 获取当前学期的表格
+                const semesterDiv = this.closest("div").closest("div").closest("div").parentNode.parentNode;
+                console.log("222111parasemesterDiv",semesterDiv);
+
+                const table = semesterDiv.querySelector("table.student-grade-table");
+                console.log("111111",table);
+
+                if (table) {
+                    // 获取表格中的所有复选框
+                    const checkboxes = table.querySelectorAll("input.weighted-checkbox");
+
+                    // 根据当前状态选择或取消选择
+                    const isSelected = this.dataset.selected === "true";
+
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = !isSelected;
+                    });
+
+                    // 更新按钮文本和状态
+                    if (isSelected) {
+                        this.innerText = "选择本学期";
+                        this.dataset.selected = "false";
+                    } else {
+                        this.innerText = "取消选择";
+                        this.dataset.selected = "true";
+                    }
+
+                    // 触发重新计算
+                    recalc();
+                }
+            });
+
+            // 将按钮添加到容器
+            titleContainer.appendChild(selectButton);
+
+            // 将容器添加回原位置
+            titleParent.appendChild(titleContainer);
+        });
+    }, 2000); // 等待页面加载完成
 })();
