@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 (function () {
-    "use strict";
+    ("use strict");
 
     // 自定义alert弹出框函数（美化且圆角）
     function customAlert(msg) {
@@ -117,34 +117,111 @@
     selectRequiredDiv.style.padding = "10px";
     selectRequiredDiv.style.zIndex = 1000;
 
-    // 创建按钮并加上圆角
-    const selectRequiredButton = document.createElement("button");
-    selectRequiredButton.innerText = "选择所有必修课";
-    selectRequiredButton.style.padding = "5px 10px";
-    selectRequiredButton.style.cursor = "pointer";
-    selectRequiredButton.style.border = "none";
-    selectRequiredButton.style.borderRadius = "5px"; // 加圆角
-    selectRequiredButton.style.backgroundColor = "#2196F3";
-    selectRequiredButton.style.color = "#fff";
-    let selectRequiredButtonClicked = false;
-    selectRequiredButton.addEventListener("click", () => {
-        if (selectRequiredButtonClicked) {
-            selectRequiredButtonClicked = false;
-            // 取消选择所有必修课
-            unSelectRequiredButtonClicked();
-            selectRequiredButton.innerText = "选择所有必修课";
-        } else {
-            selectRequiredButtonClicked = true;
+    // // 创建按钮并加上圆角
+    // const selectRequiredButton = document.createElement("button");
+    // selectRequiredButton.innerText = "选择所有必修课";
+    // selectRequiredButton.style.padding = "5px 10px";
+    // selectRequiredButton.style.cursor = "pointer";
+    // selectRequiredButton.style.border = "none";
+    // selectRequiredButton.style.borderRadius = "5px"; // 加圆角
+    // selectRequiredButton.style.backgroundColor = "#2196F3";
+    // selectRequiredButton.style.color = "#fff";
+    // let selectRequiredButtonClicked = false;
+    // selectRequiredButton.addEventListener("click", () => {
+    //     if (selectRequiredButtonClicked) {
+    //         selectRequiredButtonClicked = false;
+    //         // 取消选择所有必修课
+    //         unSelectRequiredButtonClicked();
+    //         selectRequiredButton.innerText = "选择所有必修课";
+    //     } else {
+    //         selectRequiredButtonClicked = true;
+    //         selectRequiredCourses();
+    //         alert(
+    //             "已选择所有必修课！请注意，一些专业劳动课,健康教育等也是必修课，请根据自身需求进行保留。"
+    //         );
+    //         selectRequiredButton.innerText = "取消选择所有必修课";
+    //     }
+    // });
+    // // 添加按钮到DIV
+    // selectRequiredDiv.appendChild(selectRequiredButton);
+    // document.body.appendChild(selectRequiredDiv);
+
+    // 创建下拉框
+    const courseSelector = document.createElement("select");
+    courseSelector.style.padding = "5px 10px";
+    courseSelector.style.cursor = "pointer";
+    courseSelector.style.border = "none";
+    courseSelector.style.borderRadius = "5px";
+    courseSelector.style.backgroundColor = "#2196F3";
+    courseSelector.style.color = "#fff";
+    courseSelector.style.width = "150px";
+
+    // 添加选项
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.text = "请选择操作";
+    defaultOption.selected = true;
+    courseSelector.appendChild(defaultOption);
+
+    // 选择所有课程
+    const selectAllOption = document.createElement("option");
+    selectAllOption.value = "selectAll";
+    selectAllOption.text = "选择所有课程";
+    courseSelector.appendChild(selectAllOption);
+
+    const selectRequiredOption = document.createElement("option");
+    selectRequiredOption.value = "selectRequired";
+    selectRequiredOption.text = "选择所有必修课";
+    courseSelector.appendChild(selectRequiredOption);
+
+    // 选择23软件保研参算课程
+    const select23SoftwareOption = document.createElement("option");
+    select23SoftwareOption.value = "select23Software";
+    select23SoftwareOption.text = "23软件保研参算课程";
+    courseSelector.appendChild(select23SoftwareOption);
+
+    // 选择23网络保研参算课程
+    const select23NetworkOption = document.createElement("option");
+    select23NetworkOption.value = "select23Software";
+    select23NetworkOption.text = "23网络保研参算课程";
+    courseSelector.appendChild(select23NetworkOption);
+
+    const unselectRequiredOption = document.createElement("option");
+    unselectRequiredOption.value = "unselectRequired";
+    unselectRequiredOption.text = "取消所有选择";
+    courseSelector.appendChild(unselectRequiredOption);
+
+    // 事件处理
+    courseSelector.addEventListener("change", () => {
+        if (courseSelector.value === "selectRequired") {
             selectRequiredCourses();
             alert(
                 "已选择所有必修课！请注意，一些专业劳动课,健康教育等也是必修课，请根据自身需求进行保留。"
             );
-            selectRequiredButton.innerText = "取消选择所有必修课";
+        } else if (courseSelector.value === "unselectRequired") {
+            unSelectRequiredButtonClicked();
+        } else if (courseSelector.value === "selectAll") {
+            selectAllCourses();
+        } else if (courseSelector.value === "select23Software") {
+            select23SoftwareCourses();
+        } else if (courseSelector.value === "select23NetWork") {
+            select23NetworkCourses();
         }
     });
-    // 添加按钮到DIV
-    selectRequiredDiv.appendChild(selectRequiredButton);
+
+    // 添加下拉框到DIV
+    selectRequiredDiv.appendChild(courseSelector);
     document.body.appendChild(selectRequiredDiv);
+
+    // 选择所有课程的函数
+    function selectAllCourses() {
+        const checkboxes = document.querySelectorAll("input.weighted-checkbox");
+        checkboxes.forEach((chk) => {
+            chk.checked = true;
+        });
+        // 计算加权成绩
+        recalc();
+    }
 
     // 选择所有必修课程的函数
     function selectRequiredCourses() {
@@ -167,7 +244,160 @@
         // 计算加权成绩
         recalc();
     }
-    // 取消选择所有必修课的函数
+
+    // 选择23软件保研参算课程的函数
+    function select23SoftwareCourses() {
+        // 定义需要选择的课程代码列表
+        const targetCourseCodes = [
+            "100032520070", // 思想道德与法治
+            "100032220020", // 军训
+            "100030830190", // 大学英语1
+            "100031120032", // 工科数学分析基础1
+            "100030830080", // 信息技术导论
+            "100030830200", // 程序设计基础与C程序设计
+            "100030840290", // 计算机系统实践
+            "100032520080", // 中国近现代史纲要
+            "100032220010", // 军事理论
+            "100030820010", // 大学英语2
+            "100031120042", // 工科数学分析基础2
+            "100031120110", // 线性代数与解析几何
+            "100030820020", // 离散数学1
+            "100030830021", // 面向对象方法与C++程序设计
+            "100030830220", // 模拟与数字电路
+            "100030840280", // 模拟与数字电路实验
+            "100032520090", // 马克思主义基本原理
+            "100030820030", // 大学英语3
+            "100030820060", // 离散数学2
+            "100030820080", // 计算机数学基础
+            "100031220011", // 大学物理（软）
+            "100031220041", // 大学物理实验（软）
+            "100030830230", // 数据结构与算法
+            "100030830070", // 计算机组织与结构
+            "100030861030", // 计算机组织与结构实验
+            "100032520150", // 毛泽东思想和中国特色社会主义理论体系概论
+            "100031120141", // 概率与统计A
+            "100030830100", // 计算机网络
+            "100030830270", // 操作系统
+            "100030830280", // 数据库系统
+            "100032520140", // 习近平新时代中国特色社会主义思想概论
+            "100030820110", // 高级统计方法
+            "100030830090", // 编译技术
+            "100030840011", // 软件工程
+            "100030830370", // 人工智能基础
+            "100030861040", // 网络综合实验
+            "100030840031" // 系统分析与设计
+        ];
+
+        const checkboxes = document.querySelectorAll("input.weighted-checkbox");
+        checkboxes.forEach((chk) => {
+            chk.checked = false;
+        });
+
+        // 选择目标课程
+        checkboxes.forEach((chk) => {
+            const row = chk.closest("tr");
+            if (row && row.cells && row.cells.length > 0) {
+                const courseInfoCell = row.cells[0];
+                // 找到课程代码元素
+                const courseCodeDiv =
+                    courseInfoCell.querySelector(".course-code");
+
+                if (courseCodeDiv) {
+                    // 提取课程代码
+                    const codeText = courseCodeDiv.innerText;
+                    const courseCode = codeText
+                        .replace(/课程代码：/, "")
+                        .trim();
+
+                    // 检查是否在目标列表中
+                    if (targetCourseCodes.includes(courseCode)) {
+                        chk.checked = true;
+                    }
+                }
+            }
+        });
+
+        // 计算加权成绩
+        recalc();
+    }
+
+    // 选择23网络保研参算课程的函数
+    function select23NetworkCourses() {
+        // 定义需要选择的课程代码列表
+        const targetCourseCodes = [
+            "100032520070", // 思想道德与法治
+            "100032220020", // 军训
+            "100030830190", // 大学英语1
+            "100031120032", // 工科数学分析基础1
+            "100030830080", // 信息技术导论
+            "100030830200", // 程序设计基础与C程序设计
+            "100030840290", // 计算机系统实践
+            "100032520080", // 中国近现代史纲要
+            "100032220010", // 军事理论
+            "100030820010", // 大学英语2
+            "100031120042", // 工科数学分析基础2
+            "100031120110", // 线性代数与解析几何
+            "100030820020", // 离散数学1
+            "100030830021", // 面向对象方法与C++程序设计
+            "100030830220", // 模拟与数字电路
+            "100030840280", // 模拟与数字电路实验
+            "100032520090", // 马克思主义基本原理
+            "100030820030", // 大学英语3
+            "100030820060", // 离散数学2
+            "100030820080", // 计算机数学基础
+            "100031220011", // 大学物理（软）
+            "100031220041", // 大学物理实验（软）
+            "100030830230", // 数据结构与算法
+            "100030830070", // 计算机组织与结构
+            "100030861030", // 计算机组织与结构实验
+            "100032520150", // 毛泽东思想和中国特色社会主义理论体系概论
+            "100031120141", // 概率与统计A
+            "100030830100", // 计算机网络
+            "100030830270", // 操作系统
+            "100030830280", // 数据库系统
+            "100030830560", // 网络信息安全
+            "100032520140", // 习近平新时代中国特色社会主义思想概论
+            "100030820110", // 高级统计方法
+            "100030840011", // 软件工程
+            "100030830020", // 高级C语言及网络编程技术
+            "100030861040", // 网络综合实验
+            "100030841030" // 网络协议栈分析与设计
+        ];
+
+        const checkboxes = document.querySelectorAll("input.weighted-checkbox");
+        checkboxes.forEach((chk) => {
+            chk.checked = false;
+        });
+
+        // 选择目标课程
+        checkboxes.forEach((chk) => {
+            const row = chk.closest("tr");
+            if (row && row.cells && row.cells.length > 0) {
+                const courseInfoCell = row.cells[0];
+                // 找到课程代码元素
+                const courseCodeDiv =
+                    courseInfoCell.querySelector(".course-code");
+
+                if (courseCodeDiv) {
+                    // 提取课程代码
+                    const codeText = courseCodeDiv.innerText;
+                    const courseCode = codeText
+                        .replace(/课程代码：/, "")
+                        .trim();
+
+                    // 检查是否在目标列表中
+                    if (targetCourseCodes.includes(courseCode)) {
+                        chk.checked = true;
+                    }
+                }
+            }
+        });
+
+        // 计算加权成绩
+        recalc();
+    }
+
+    // 取消所有已选课程
     function unSelectRequiredButtonClicked() {
         const checkboxes = document.querySelectorAll("input.weighted-checkbox");
         checkboxes.forEach((chk) => {
@@ -261,15 +491,21 @@
             // 添加点击事件
             selectButton.addEventListener("click", function () {
                 // 获取当前学期的表格
-                const semesterDiv = this.closest("div").closest("div").closest("div").parentNode.parentNode;
-                console.log("222111parasemesterDiv",semesterDiv);
+                const semesterDiv = this.closest("div")
+                    .closest("div")
+                    .closest("div").parentNode.parentNode;
+                console.log("222111parasemesterDiv", semesterDiv);
 
-                const table = semesterDiv.querySelector("table.student-grade-table");
-                console.log("111111",table);
+                const table = semesterDiv.querySelector(
+                    "table.student-grade-table"
+                );
+                console.log("111111", table);
 
                 if (table) {
                     // 获取表格中的所有复选框
-                    const checkboxes = table.querySelectorAll("input.weighted-checkbox");
+                    const checkboxes = table.querySelectorAll(
+                        "input.weighted-checkbox"
+                    );
 
                     // 根据当前状态选择或取消选择
                     const isSelected = this.dataset.selected === "true";
